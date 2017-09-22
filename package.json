@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/lcanizzo/siri-who/issues"
   },
-  "homepage": "https://github.com/lcanizzo/siri-who#readme"
+  "homepage": "https://github.com/lcanizzo/siri-who#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "querystring": "^0.2.0",
+    "request": "^2.82.0",
+    "spotify": "^0.3.0",
+    "twitter": "^1.7.1"
+  }
 }
