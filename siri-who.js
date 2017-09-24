@@ -19,10 +19,11 @@ function printTweets() {
     clientTwitter.get('statuses/user_timeline', function (error, tweets, response) {
         if (!error) {
             for (let i = 0; i < tweets.length; i++) {
+                let text = '"'+tweets[i].text+'"';                
                 console.log(
                     tweets[i].created_at, '\n',
                     tweets[i].user.screen_name, 'said: \n',
-                    "  ", tweets[i].text, '\n');
+                    "  ", text, '\n');
             }
         } else {
             console.log('E R R O R: ', error);
@@ -32,6 +33,14 @@ function printTweets() {
 
 // S P O T I F Y   
 var spotifyApi = new SpotifyWebApi(spotifyKeys);
+// Artist(s)
+
+// The song's name
+
+// A preview link of the song from Spotify
+
+// The album that the song is from
+
 
 function spotifyThis(input) {
     spotifyApi.clientCredentialsGrant()
@@ -39,7 +48,14 @@ function spotifyThis(input) {
         spotifyApi.setAccessToken(data.body['access_token']);
         spotifyApi.searchTracks(input)
             .then(function (data) {
-                console.log('\n D A T A: \n', data.body.tracks.items[0]);
+                // console.log('\n D A T A: \n', data.body.tracks.items[0]);
+                console.log('\n Song Info: \n',
+                    ' Artist:', data.body.tracks.items[0].artists[0].name,
+                    '\n  Title:', data.body.tracks.items[0].name,
+                    '\n  Preview:', data.body.tracks.items[0].preview_url,
+                    '\n  Album:', data.body.tracks.items[0].album.name,
+                    '\n  Listen:', data.body.tracks.items[0].external_urls.spotify
+            )
             }, function (err) {
                 console.log(err);
             })
@@ -78,12 +94,17 @@ function movieThis(input) {
 function switchFunctions(argument, input) {
     switch (argument) {
         case "tweets":
+        case "-t":
+        case "myTwitter":
             printTweets();
             break;
         case "spotify":
+        case "-s":
+        case "song":        
             spotifyThis(input);
             break;
         case "movie":
+        case "-m":
             movieThis(input);
             break;
         case "do-it":
