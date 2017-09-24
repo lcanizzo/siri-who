@@ -10,7 +10,12 @@ const twitterKeys = keys.twitterKeys;
 const spotifyKeys = keys.spotifyKeys;
 
 // D E F I N E  I N P U T 
-var input = process.argv[3];
+var input = "";
+if (process.argv.length > 3) {
+    for (let i = 3; i < process.argv.length; i++){
+        input += (process.argv[i]+'+');
+    }
+}
 
 //  T W I T T E R 
 var clientTwitter = new twitter(twitterKeys);
@@ -33,14 +38,6 @@ function printTweets() {
 
 // S P O T I F Y   
 var spotifyApi = new SpotifyWebApi(spotifyKeys);
-// Artist(s)
-
-// The song's name
-
-// A preview link of the song from Spotify
-
-// The album that the song is from
-
 
 function spotifyThis(input) {
     spotifyApi.clientCredentialsGrant()
@@ -49,12 +46,12 @@ function spotifyThis(input) {
         spotifyApi.searchTracks(input)
             .then(function (data) {
                 // console.log('\n D A T A: \n', data.body.tracks.items[0]);
-                console.log('\n Song Info: \n',
-                    ' Artist:', data.body.tracks.items[0].artists[0].name,
-                    '\n  Title:', data.body.tracks.items[0].name,
-                    '\n  Preview:', data.body.tracks.items[0].preview_url,
-                    '\n  Album:', data.body.tracks.items[0].album.name,
-                    '\n  Listen:', data.body.tracks.items[0].external_urls.spotify
+                console.log('\n ***Song Info*** \n\n',
+                    ' -Artist:', '\n   ', data.body.tracks.items[0].artists[0].name,
+                    '\n  -Title:', '\n   ', data.body.tracks.items[0].name,
+                    '\n  -Preview:', '\n   ', data.body.tracks.items[0].preview_url,
+                    '\n  -Album:', '\n   ', data.body.tracks.items[0].album.name,
+                    '\n  -Listen:', '\n   ', data.body.tracks.items[0].external_urls.spotify
             )
             }, function (err) {
                 console.log(err);
@@ -69,23 +66,22 @@ function movieThis(input) {
     if (process.argv[2] !== "do-it" && !process.argv[3]) {
         input = 'It';
     } 
-
     let queryUrl = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=40e9cece";
-
+    
     request(queryUrl, function(err, data){
         if (err){
           throw err;
         } else {
           let object = JSON.parse(data.body);
-          console.log('\n',
-          'Title: ', '\n  ', object.Title, 
-          '\n Year: ', '\n  ', object.Year, 
-          '\n IMDB Rating: ', '\n  ', object.imdbRating,
-          '\n Rotten Tomatoes Rating: ', '\n  ', object.Ratings[1].Value,
-          '\n Country: ', '\n  ', object.Country,
-          '\n Language: ', '\n  ', object.Language,
-          '\n Plot: ', '\n  ', object.Plot,
-          '\n Actors: ', '\n  ', object.Actors)
+          console.log('\n ***Movie Info*** \n\n',
+          '-Title: ', '\n  ', object.Title, 
+          '\n -Year: ', '\n  ', object.Year, 
+          '\n -IMDB Rating: ', '\n  ', object.imdbRating,
+          '\n -Rotten Tomatoes Rating: ', '\n  ', object.Ratings[1].Value,
+          '\n -Country: ', '\n  ', object.Country,
+          '\n -Language: ', '\n  ', object.Language,
+          '\n -Plot: ', '\n  ', object.Plot,
+          '\n -Actors: ', '\n  ', object.Actors)
         }
       })
 }
@@ -108,6 +104,7 @@ function switchFunctions(argument, input) {
             movieThis(input);
             break;
         case "do-it":
+        case "-d":
             listenToThis();
             break;
         default:
