@@ -2,19 +2,19 @@
 const keys = require('./key.js');
 const twitter = require('twitter');
 const request = require('request');
-const curl = require('curlrequest');
+var SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
-
-// const spotify = require('node-spotify-api');
-
 
 // K E Y S 
 const twitterKeys = keys.twitterKeys;
+const spotifyKeys = keys.spotifyKeys;
 
-// const spotifyKeys = keys.spotifyKeys;
+// D E F I N E  I N P U T 
+var input = process.argv[3];
 
 //  T W I T T E R 
 var clientTwitter = new twitter(twitterKeys);
+
 function printTweets() {
     clientTwitter.get('statuses/user_timeline', function (error, tweets, response) {
         if (!error) {
@@ -30,111 +30,25 @@ function printTweets() {
     });
 }
 
-// S P O T I F Y 
-// let track = process.argv[3];
-// var clientSpotify = new spotify (spotifyKeys);
-// //One word only for test cases
-// function spotifyThis(){
-//     clientSpotify.search({ type: 'track', query: track}, function(error, data){
-//         if (!error) {
-//             console.log(data);
+// S P O T I F Y   
+var spotifyApi = new SpotifyWebApi(spotifyKeys);
 
-//             // console.log(
-//             //     'Artist(s): ', data +
-//             //     'Title: ', data +
-//             //     'Listen: ', data +
-//             //     'Album: ', data
-//             // )
-//         } else {
-//             console.log('E R R O R: ', error);            
-//         }
-//     })
-// }
-
-// 2nd S P O T I F Y   A P I
-
-// S P O T I F Y   A U T H
-var SpotifyWebApi = require('spotify-web-api-node');
-
-// var spotifyApi = new SpotifyWebApi({
-//     clientId: 'fac328254777437799105768aead360a',
-//     clientSecret: '233cb2cb159c4704878f2ff70d7beecf',
-//     redirectUri: 'http://www.example.com/callback'
-// });
-
-var spotifyApi = new SpotifyWebApi({
-    clientId: 'fac328254777437799105768aead360a',
-    clientSecret: '233cb2cb159c4704878f2ff70d7beecf',
-});
-
-
-let track = process.argv[3];
-
-    // function grantAuth() {
-    //     spotifyApi.clientCredentialsGrant()
-    //         .then(function (data) {
-    //             spotifyApi.setAccessToken(data.body['access_token']);
-    //             console.log('\n spotifyApi1: \n', spotifyApi); 
-    //             let token = data.body['access_token'];
-    //             console.log('\n token: \n', token);
-    //             let spotifyApi2 = new SpotifyWebApi({
-    //                 accessToken : token
-    //             });
-    //             let searchSpotifyApi = spotifyApi2._credentials.accessToken;
-    //             console.log('\n Check Token From API: \n', searchSpotifyApi);
-    //             spotifyApi2.searchTracks(track)
-    //                 .then(function (data) {
-    //                     console.log('\n spotifyApi2: \n', spotifyApi2);
-    //                     console.log('\n D A T A: \n', data);
-    //                 }, function (err) {
-    //                     console.log(err);
-    //                 })
-    //         }, function (err) {
-    //             console.log('Could not get access token', err);
-    //         })
-    // }
-
-// function grantAuth() {
-//     spotifyApi.clientCredentialsGrant()
-//         .then(function (data) {
-//             spotifyApi.setAccessToken(data.body['access_token']);
-//             console.log('\n spotifyApi1: \n', spotifyApi); 
-//             let token = data.body['access_token'];
-//             console.log('\n token: \n', token);
-
-//             var options = { 
-//                 url: 'https://api.spotify.com/v1/tracks/2TpxZ7JUBn3uw46aR7qd6V',                 
-//                 headers: {
-//                     Authorization: 'bearer ' + token,
-//                 },
-//             }
-
-//             curl.request(options, function(err, data){
-//                 console.log('\n spotifyToken: \n', options.headers.Authorization);  
-//                 console.log('\n typeOf Auth Token: \n', typeof(options.headers.Authorization));  
-//                 if (!err) {
-//                     console.log('\n D A T A: \n', data);
-//                 } else {
-//                     console.log('\n E R R O R: \n', err);
-//                 }
-//             })
-//         }, function (err) {
-//             console.log('Could not get access token', err);
-//         })
-// }
-
-// S P O T I F Y   F U N C T I O N
-// one word tracks for testing only
-function spotifyThis() {
-    console.log('SpotifyThis in development');
+function spotifyThis(input) {
+    spotifyApi.clientCredentialsGrant()
+    .then(function (data) {
+        spotifyApi.setAccessToken(data.body['access_token']);
+        spotifyApi.searchTracks(input)
+            .then(function (data) {
+                console.log('\n D A T A: \n', data.body.tracks.items[0]);
+            }, function (err) {
+                console.log(err);
+            })
+    }, function (err) {
+        console.log('Could not get access token', err);
+    })
 }
 
-
-// O M D B  F U N C T I O N 
-
-var input = process.argv[3];
-// One word searches for testing
-
+// O M D B  
 function movieThis(input) {
     if (process.argv[2] !== "do-it" && !process.argv[3]) {
         input = 'It';
