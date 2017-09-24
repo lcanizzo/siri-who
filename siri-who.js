@@ -3,6 +3,7 @@ const keys = require('./key.js');
 const twitter = require('twitter');
 const request = require('request');
 const curl = require('curlrequest');
+const fs = require('fs');
 
 // const spotify = require('node-spotify-api');
 
@@ -14,7 +15,6 @@ const twitterKeys = keys.twitterKeys;
 
 //  T W I T T E R 
 var clientTwitter = new twitter(twitterKeys);
-// var params = {screen_name: 'nodejs'};
 function printTweets() {
     clientTwitter.get('statuses/user_timeline', function (error, tweets, response) {
         if (!error) {
@@ -126,20 +126,21 @@ let track = process.argv[3];
 // S P O T I F Y   F U N C T I O N
 // one word tracks for testing only
 function spotifyThis() {
-    grantAuth();
+    console.log('SpotifyThis in development');
 }
 
 
 // O M D B  F U N C T I O N 
 
-let movieName = process.argv[3];
+var input = process.argv[3];
+// One word searches for testing
 
-function movieThis() {
-    if (!process.argv[3]) {
-        movieName = 'It';
+function movieThis(input) {
+    if (process.argv[2] !== "do-it" && !process.argv[3]) {
+        input = 'It';
     } 
 
-    let queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=40e9cece";
+    let queryUrl = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=40e9cece";
 
     request(queryUrl, function(err, data){
         if (err){
@@ -159,19 +160,17 @@ function movieThis() {
       })
 }
 
-// S W I T C H
-if (process.argv.length == 2) {
-    console.log('Help: \n');
-} else {
-    switch (process.argv[2]) {
+// S W I T C H   F U N C T I O N S
+function switchFunctions(argument, input) {
+    switch (argument) {
         case "tweets":
             printTweets();
             break;
         case "spotify":
-            spotifyThis();
+            spotifyThis(input);
             break;
         case "movie":
-            movieThis();
+            movieThis(input);
             break;
         case "do-it":
             listenToThis();
@@ -179,4 +178,29 @@ if (process.argv.length == 2) {
         default:
             console.log('no valid input (input options)');
     }
+}
+
+
+// D O   I T   F U N C T I O N 
+
+function listenToThis(){
+    var doThis = [];
+    fs.readFile('random.txt', 'utf8', function(error, data) {
+        if (error) {
+            return console.log(error);
+        } else {
+            doThis = (data.split(","));
+            let input = doThis[1];          
+            let prompt = doThis[0];
+            switchFunctions(prompt, input);
+        }       
+    })
+}
+
+
+// S W I T C H
+if (process.argv.length == 2) {
+    console.log('Help: \n');
+} else {
+    switchFunctions(process.argv[2], input);
 }
