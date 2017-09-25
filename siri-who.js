@@ -2,7 +2,8 @@
 const keys = require('./key.js');
 const twitter = require('twitter');
 const request = require('request');
-var SpotifyWebApi = require('spotify-web-api-node');
+const weather = require('weather-js');
+const SpotifyWebApi = require('spotify-web-api-node');
 const fs = require('fs');
 
 // K E Y S 
@@ -15,6 +16,43 @@ if (process.argv.length > 3) {
     for (let i = 3; i < process.argv.length; i++){
         input += (process.argv[i]+'+');
     }
+}
+
+// D E F I N E   A D D R E S S 
+var address = [];
+var string = "";
+
+for (let i = 3; i < process.argv.length; i++){
+    address.push(process.argv[i]);
+}
+string = address.toString();   
+
+// H E L P  
+function help(){
+    console.log('Instructions: \n');
+}
+
+// W E A T H E R
+function weatherHere() {
+    weather.find({search: string}, function(err, data){
+        if(!err){
+            console.log('\n ***Future Forecast***\n',
+            string);
+            for (let i = 0; i < data[0].forecast.length; i++){
+                var precip = data[0].forecast[i].precip;
+                if (!precip){
+                    precip = 0;
+                }
+                console.log('\n', data[0].forecast[i].day + ':\n',
+                ' -High:', '\n   ',data[0].forecast[i].high,
+                '\n  -Low:', '\n   ', data[0].forecast[i].low,
+                '\n  -Precipitation:', '\n   ', precip + '%',
+                '\n  -Cloud Cover:', '\n   ', data[0].forecast[i].skytextday);
+            }
+        } else {
+            console.log('error: \n', err);
+        }
+    })
 }
 
 //  T W I T T E R 
@@ -95,6 +133,7 @@ function switchFunctions(argument, input) {
             printTweets();
             break;
         case "spotify":
+        case "spotify-this":
         case "-s":
         case "song":        
             spotifyThis(input);
@@ -107,8 +146,12 @@ function switchFunctions(argument, input) {
         case "-d":
             listenToThis();
             break;
+        case "weather":
+        case "-w":
+            weatherHere();
+            break;
         default:
-            console.log('no valid input (input options)');
+            help();
     }
 }
 
@@ -132,7 +175,7 @@ function listenToThis(){
 
 // S W I T C H
 if (process.argv.length == 2) {
-    console.log('Help: \n');
+    help();
 } else {
     switchFunctions(process.argv[2], input);
 }

@@ -26,6 +26,8 @@
     "request": "^2.82.0",
     "spotify": "^0.3.0",
     "spotify-web-api-node": "^2.5.0",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "weather": "^0.1.0",
+    "weather-js": "^2.0.0"
   }
 }
