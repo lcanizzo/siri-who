@@ -9,8 +9,8 @@ Basic Language Interpretation and Recognition Interface
 
 ![Spotify Listen](/gifs/spotifyListen.gif)
 
-![Weather Forcast](/gifs/weatherSmall.gif)
+![Weather Forcast](/gifs/weather.gif)
 
-![OMDB Search](/gifs/omdb.gif)
+![OMDB Search](/gifs/movie.gif)
 
 ![Pulled Function](/gifs/doIt.gif)
