@@ -25,9 +25,7 @@ const content = chalk.white;
 // H E L P  
 function help() {
     log(
-        title('\nInstructions:\n'),
-        
-    )
+        title('\nInstructions:\n'))
 }
 
 // D E F I N E  I N P U T 
