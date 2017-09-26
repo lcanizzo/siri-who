@@ -54,7 +54,7 @@ function weatherHere() {
             log(title('\n Future Forecast\n',
                 string));
             for (let i = 0; i < data[0].forecast.length; i++) {
-                var precip = data[0].forecast[i].precip;
+                let precip = data[0].forecast[i].precip;
                 if (!precip) {
                     precip = 0;
                 }
@@ -75,7 +75,7 @@ function weatherHere() {
 }
 
 //  T W I T T E R 
-var clientTwitter = new twitter(twitterKeys);
+const clientTwitter = new twitter(twitterKeys);
 
 function printTweets() {
     clientTwitter.get('statuses/user_timeline', function (error, tweets, response) {
@@ -94,7 +94,7 @@ function printTweets() {
 }
 
 // S P O T I F Y    
-var spotifyApi = new SpotifyWebApi(spotifyKeys);
+const spotifyApi = new SpotifyWebApi(spotifyKeys);
 
 function spotifyThis(input) {
     spotifyApi.clientCredentialsGrant()
@@ -188,7 +188,7 @@ function switchFunctions(argument, input) {
 
 // D O   I T   F U N C T I O N 
 function listenToThis() {
-    var doThis = [];
+    let doThis = [];
     fs.readFile('random.txt', 'utf8', function (error, data) {
         if (error) {
             return log(error);
