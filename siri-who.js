@@ -69,7 +69,7 @@ function weatherHere() {
                 content(data[0].forecast[i].skytextday));
             }
         } else {
-            log('error: \n', err);
+            log(('error: \n', err));
         }
     })
 }
@@ -88,7 +88,7 @@ function printTweets() {
                     content("  ", text, '\n'));
             }
         } else {
-            log('E R R O R: ', error);
+            log(('E R R O R: ', error));
         }
     });
 }
@@ -118,7 +118,7 @@ function spotifyThis(input) {
                     log(err);
                 })
         }, function (err) {
-            log('Could not get access token', err);
+            log(('Could not get access token', err));
         })
 }
 
