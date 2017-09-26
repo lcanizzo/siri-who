@@ -29,7 +29,7 @@ function help() {
 }
 
 // D E F I N E  I N P U T 
-var input = "";
+let input = "";
 if (argv.length > 3) {
     for (let i = 3; i < argv.length; i++) {
         input += (argv[i] + '+');
@@ -37,8 +37,8 @@ if (argv.length > 3) {
 }
 
 // D E F I N E   A D D R E S S 
-var address = [];
-var string = "";
+let address = [];
+let string = "";
 
 for (let i = 3; i < argv.length; i++) {
     address.push(argv[i]);
