@@ -4,31 +4,46 @@ const twitter = require('twitter');
 const request = require('request');
 const weather = require('weather-js');
 const SpotifyWebApi = require('spotify-web-api-node');
+const chalk = require('chalk');
 const fs = require('fs');
 
 // K E Y S 
 const twitterKeys = keys.twitterKeys;
 const spotifyKeys = keys.spotifyKeys;
 
-// D E F I N E  I N P U T 
-var input = "";
-if (process.argv.length > 3) {
-    for (let i = 3; i < process.argv.length; i++) {
-        input += (process.argv[i] + '+');
-    }
-}
+// C O N S T A N T S
+const argv = process.argv;
+const log = console.log;
+
+// C H A L K   T H E M E S
+const error = chalk.bold.red;
+const title = chalk.yellow;
+const h1 = chalk.magentaBright;
+const h2 = chalk.blueBright;
+const content = chalk.white;
 
 // H E L P  
 function help() {
-    console.log('Instructions: \n');
+    log(
+        title('\nInstructions:\n'),
+        
+    )
+}
+
+// D E F I N E  I N P U T 
+var input = "";
+if (argv.length > 3) {
+    for (let i = 3; i < argv.length; i++) {
+        input += (argv[i] + '+');
+    }
 }
 
 // D E F I N E   A D D R E S S 
 var address = [];
 var string = "";
 
-for (let i = 3; i < process.argv.length; i++) {
-    address.push(process.argv[i]);
+for (let i = 3; i < argv.length; i++) {
+    address.push(argv[i]);
 }
 string = address.toString();
 
@@ -38,21 +53,25 @@ function weatherHere() {
         search: string
     }, function (err, data) {
         if (!err) {
-            console.log('\n ***Future Forecast***\n',
-                string);
+            log(title('\n Future Forecast\n',
+                string));
             for (let i = 0; i < data[0].forecast.length; i++) {
                 var precip = data[0].forecast[i].precip;
                 if (!precip) {
                     precip = 0;
                 }
-                console.log('\n', data[0].forecast[i].day + ':\n',
-                    ' -High:', '\n   ', data[0].forecast[i].high,
-                    '\n  -Low:', '\n   ', data[0].forecast[i].low,
-                    '\n  -Precipitation:', '\n   ', precip + '%',
-                    '\n  -Cloud Cover:', '\n   ', data[0].forecast[i].skytextday);
+                log(h1('\n', data[0].forecast[i].day + ':\n'),
+                h2(' -High:\n   '), 
+                content(data[0].forecast[i].high),
+                h2('\n  -Low:\n   '), 
+                content(data[0].forecast[i].low),
+                h2('\n  -Precipitation:\n   '), 
+                content(precip + '%'),
+                h2('\n  -Cloud Cover:\n   '), 
+                content(data[0].forecast[i].skytextday));
             }
         } else {
-            console.log('error: \n', err);
+            log('error: \n', err);
         }
     })
 }
@@ -65,18 +84,18 @@ function printTweets() {
         if (!error) {
             for (let i = 0; i < tweets.length; i++) {
                 let text = '"' + tweets[i].text + '"';
-                console.log(
-                    tweets[i].created_at, '\n',
-                    tweets[i].user.screen_name, 'said: \n',
-                    "  ", text, '\n');
+                log(
+                    title(tweets[i].created_at, '\n'),
+                    h1(tweets[i].user.screen_name, 'said: \n'),
+                    content("  ", text, '\n'));
             }
         } else {
-            console.log('E R R O R: ', error);
+            log('E R R O R: ', error);
         }
     });
 }
 
-// S P O T I F Y   
+// S P O T I F Y    
 var spotifyApi = new SpotifyWebApi(spotifyKeys);
 
 function spotifyThis(input) {
@@ -85,24 +104,29 @@ function spotifyThis(input) {
             spotifyApi.setAccessToken(data.body['access_token']);
             spotifyApi.searchTracks(input)
                 .then(function (data) {
-                    console.log('\n ***Song Info*** \n\n',
-                        ' -Artist:', '\n   ', data.body.tracks.items[0].artists[0].name,
-                        '\n  -Title:', '\n   ', data.body.tracks.items[0].name,
-                        '\n  -Preview:', '\n   ', data.body.tracks.items[0].preview_url,
-                        '\n  -Album:', '\n   ', data.body.tracks.items[0].album.name,
-                        '\n  -Listen:', '\n   ', data.body.tracks.items[0].external_urls.spotify
+                    log(title('\n Song Info \n\n'),
+                        h1(' -Artist:\n   '), 
+                        content(data.body.tracks.items[0].artists[0].name),
+                        h1('\n  -Title:\n   '), 
+                        content(data.body.tracks.items[0].name),
+                        h1('\n  -Preview:\n   '), 
+                        content(data.body.tracks.items[0].preview_url),
+                        h1('\n  -Album:\n   '), 
+                        content(data.body.tracks.items[0].album.name),
+                        h1('\n  -Listen:\n   '), 
+                        content(data.body.tracks.items[0].external_urls.spotify)
                     )
                 }, function (err) {
-                    console.log(err);
+                    log(err);
                 })
         }, function (err) {
-            console.log('Could not get access token', err);
+            log('Could not get access token', err);
         })
 }
 
 // O M D B  
 function movieThis(input) {
-    if (process.argv[2] !== "do-it" && !process.argv[3]) {
+    if (argv[2] !== "do-it" && !argv[3]) {
         input = 'It';
     }
     let queryUrl = "http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=40e9cece";
@@ -112,15 +136,23 @@ function movieThis(input) {
             throw err;
         } else {
             let object = JSON.parse(data.body);
-            console.log('\n ***Movie Info*** \n\n',
-                '-Title: ', '\n  ', object.Title,
-                '\n -Year: ', '\n  ', object.Year,
-                '\n -IMDB Rating: ', '\n  ', object.imdbRating,
-                '\n -Rotten Tomatoes Rating: ', '\n  ', object.Ratings[1].Value,
-                '\n -Country: ', '\n  ', object.Country,
-                '\n -Language: ', '\n  ', object.Language,
-                '\n -Plot: ', '\n  ', object.Plot,
-                '\n -Actors: ', '\n  ', object.Actors)
+            log(title('\n Movie Info \n\n'),
+                h1('-Title:\n  '), 
+                content(object.Title),
+                h1('\n -Year:\n  '), 
+                content(object.Year),
+                h1('\n -IMDB Rating:\n  '), 
+                content(object.imdbRating),
+                h1('\n -Rotten Tomatoes Rating:\n  '), 
+                content(object.Ratings[1].Value),
+                h1('\n -Country:\n  '), 
+                content(object.Country),
+                h1('\n -Language:\n  '), 
+                content(object.Language),
+                h1('\n -Plot:\n  '), 
+                content(object.Plot),
+                h1('\n -Actors:\n  '), 
+                content(object.Actors))
         }
     })
 }
@@ -161,7 +193,7 @@ function listenToThis() {
     var doThis = [];
     fs.readFile('random.txt', 'utf8', function (error, data) {
         if (error) {
-            return console.log(error);
+            return log(error);
         } else {
             doThis = (data.split(","));
             let input = doThis[1];
@@ -172,8 +204,8 @@ function listenToThis() {
 }
 
 // S W I T C H
-if (process.argv.length == 2) {
+if (argv.length == 2) {
     help();
 } else {
-    switchFunctions(process.argv[2], input);
+    switchFunctions(argv[2], input);
 }

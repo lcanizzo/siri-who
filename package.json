@@ -18,6 +18,7 @@
   "homepage": "https://github.com/lcanizzo/siri-who#readme",
   "dependencies": {
     "async": "^2.5.0",
+    "chalk": "^2.1.0",
     "curl": "^0.1.4",
     "curlrequest": "^1.0.1",
     "express": "^4.15.4",
